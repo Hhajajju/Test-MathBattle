@@ -398,15 +398,26 @@ async function showAdsgramAd() {
         try {
             window.Adsgram.init({ blockId: "2561" });
 
-            window.Adsgram.show()
-                .then(() => resolve(true))
-                .catch(() => reject(false));
+            window.Adsgram.show({
+                onReward: () => {
+                    // ✅ User watched full ad
+                    resolve(true);
+                },
+                onClose: () => {
+                    // ❌ User closed early
+                    reject("Ad closed early");
+                },
+                onError: (err) => {
+                    // ❌ Ad failed
+                    reject(err);
+                }
+            });
+
         } catch (e) {
             reject(e);
         }
     });
-}
-        
+}async    
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";

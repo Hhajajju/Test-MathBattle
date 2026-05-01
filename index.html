@@ -393,32 +393,46 @@
   appId: "1:681606906527:web:6f887687b0b196904d58aa"
 };
 
-async function showAdsgramAd() {
+// ✅ AdsGram Init (run once)
+window.addEventListener("load", () => {
+    if (window.Adsgram) {
+        window.Adsgram.init({ blockId: "2561" });
+        console.log("AdsGram initialized");
+    } else {
+        console.error("AdsGram not loaded");
+    }
+});
+// ✅ Correct AdsGram Reward Function
+function showAdsgramAd() {
     return new Promise((resolve, reject) => {
-        try {
-            window.Adsgram.init({ blockId: "2561" });
 
-            window.Adsgram.show({
-                onReward: () => {
-                    // ✅ User watched full ad
-                    resolve(true);
-                },
-                onClose: () => {
-                    // ❌ User closed early
-                    reject("Ad closed early");
-                },
-                onError: (err) => {
-                    // ❌ Ad failed
-                    reject(err);
-                }
-            });
-
-        } catch (e) {
-            reject(e);
+        if (!window.Adsgram) {
+            reject("Adsgram not loaded");
+            return;
         }
+
+        window.Adsgram.show({
+            blockId: "2561",
+
+            onReward: () => {
+                console.log("Reward earned");
+                resolve(true); // ✅ SUCCESS
+            },
+
+            onClose: () => {
+                console.log("Ad closed early");
+                reject("closed"); // ❌ USER SKIPPED
+            },
+
+            onError: (err) => {
+                console.error("Ad error:", err);
+                reject(err); // ❌ ERROR
+            }
+        });
+
     });
-}    
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+}
+async    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
@@ -643,7 +657,16 @@ async function showAdsgramAd() {
             loader.style.display = 'flex';
             try {
                 // STRICT AD REQUIREMENT
-                await showAdsgramAd();
+                try {
+    await showAdsgramAd();
+
+    // ✅ GIVE REWARD
+    coins += 10;
+    updateUI();
+
+} catch (e) {
+    showAlert("Watch full ad to earn reward");
+}
                 
                 await updateDoc(doc(db, "users", currentUser.uid), { lastCheckInDate: today });
                 userData.lastCheckInDate = today;
@@ -684,7 +707,16 @@ async function showAdsgramAd() {
                 loader.style.display = 'flex';
                 try {
                     // STRICT AD REQUIREMENT
-                    await showAdsgramAd();
+                    try {
+    await showAdsgramAd();
+
+    // ✅ GIVE REWARD
+    coins += 10;
+    updateUI();
+
+} catch (e) {
+    showAlert("Watch full ad to earn reward");
+}
                     
                     const newCount = (userData.dailyMathCount || 0) + 1;
                     const cTime = Date.now();
@@ -715,7 +747,16 @@ async function showAdsgramAd() {
             loader.style.display = 'flex';
             try {
                 // STRICT AD REQUIREMENT
-                await showAdsgramAd();
+                try {
+    await showAdsgramAd();
+
+    // ✅ GIVE REWARD
+    coins += 10;
+    updateUI();
+
+} catch (e) {
+    showAlert("Watch full ad to earn reward");
+}
                 
                 const newCount = (userData.dailyAdCount || 0) + 1;
                 const cTime = Date.now();
